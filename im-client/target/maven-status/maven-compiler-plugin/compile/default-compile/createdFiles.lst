@@ -1,0 +1,9 @@
+ai\yunxi\im\client\init\IMClientInit.class
+ai\yunxi\im\client\service\impl\RouteServiceImpl.class
+ai\yunxi\im\client\service\RouteService.class
+ai\yunxi\im\client\init\IMClientHandleInitializer.class
+ai\yunxi\im\client\IMClientApplication.class
+ai\yunxi\im\client\config\BeanConfiguration.class
+ai\yunxi\im\client\config\UserClientConfiguration.class
+ai\yunxi\im\client\handle\IMClientHandle.class
+ai\yunxi\im\client\scanner\Scan.class
