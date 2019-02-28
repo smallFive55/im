@@ -1,9 +1,0 @@
-ai\yunxi\im\common\constant\MessageStatus.class
-ai\yunxi\im\common\pojo\UserInfo.class
-ai\yunxi\im\common\pojo\IMServiceResponse$LoginInfo.class
-ai\yunxi\im\common\enums\StatusEnum.class
-ai\yunxi\im\common\constant\Constant.class
-ai\yunxi\im\common\protocol\MessageCodec.class
-ai\yunxi\im\common\pojo\IMServiceResponse.class
-ai\yunxi\im\common\pojo\ServiceInfo.class
-ai\yunxi\im\common\protocol\MessageObject.class
