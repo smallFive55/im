@@ -1,14 +1,8 @@
 package ai.yunxi.im.server.handle;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ai.yunxi.im.common.constant.MessageStatus;
-import ai.yunxi.im.common.protocol.MessageCodec;
-import ai.yunxi.im.common.protocol.MessageObject;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,34 +21,24 @@ public class IMServerHandle extends SimpleChannelInboundHandler {
     
     private static final Map<Long, Channel> CHANNEL_MAP = new ConcurrentHashMap<Long, Channel>(16);
     
-    private final MessageCodec codec = new MessageCodec();
-    
     //设置一些Channel的属性
   	private AttributeKey<Long> userId = AttributeKey.valueOf("userId"); 
     
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//		ByteBuf buf = (ByteBuf) msg;
-//		//buf.readableBytes():获取缓冲区中可读的字节数；
-//		//根据可读字节数创建数组
-//		byte[] req = new byte[buf.readableBytes()];
-//		buf.readBytes(req);
-//		String body = new String(req, "UTF-8");
-//		System.out.println("The time server(Thread:"+Thread.currentThread()+") receive order : "+body);
-		
+		System.out.println(msg.toString());
 		//客户端消息处理
 		handleMessages(ctx, msg.toString());
 	}
 
 	private void handleMessages(ChannelHandlerContext ctx, String msg) {
 		
-		MessageObject message = codec.decoder(msg);
-		if(MessageStatus.LOGIN.equals(message.getCmd())){
+		if("LOGIN".equals(msg)){
 			//处理客户端登陆逻辑
-			ctx.channel().attr(userId).set(message.getUserId());
+//			ctx.channel().attr(userId).set(message.getUserId());
 			//保存客户端userId与channel的关系映射
-			CHANNEL_MAP.put(message.getUserId(), ctx.channel());
-		} else if(MessageStatus.CHAT.equals(message.getCmd())){
+//			CHANNEL_MAP.put(message.getUserId(), ctx.channel());
+		} else if("CHAT".equals(msg)){
 			//处理客户端消息发送逻辑
 			
 		}
@@ -94,6 +78,12 @@ public class IMServerHandle extends SimpleChannelInboundHandler {
 //		if (!response.isSuccessful()){
 //		    throw new IOException("Unexpected code " + response);
 //		}
+	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		System.out.println("服务端退出连接");
+//		ctx.channel().close();
 	}
 
 }

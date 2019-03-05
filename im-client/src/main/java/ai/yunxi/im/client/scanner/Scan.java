@@ -43,16 +43,6 @@ public class Scan implements Runnable {
         Scanner sc = new Scanner(System.in);
         while (true) {
             String msg = sc.nextLine();
-//            //检查消息
-//            if (msgHandle.checkMsg(msg)) {
-//                continue;
-//            }
-//
-//            //系统内置命令
-//            if (msgHandle.innerCommand(msg)){
-//                continue;
-//            }
-//
             //真正的发送消息
     		byte[] req = msg.getBytes();
     		ByteBuf message = Unpooled.buffer(req.length);

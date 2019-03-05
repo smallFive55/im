@@ -3,6 +3,7 @@ package ai.yunxi.im.client.init;
 import ai.yunxi.im.client.handle.IMClientHandle;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * Function:
@@ -19,7 +20,7 @@ public class IMClientHandleInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel ch) throws Exception {
         ch.pipeline()
 //                //10 秒没发送消息 将IdleStateHandler 添加到 ChannelPipeline 中
-//                .addLast(new IdleStateHandler(0, 10, 0))
+                .addLast(new IdleStateHandler(0, 10, 0))
 //
 //                //心跳解码
 //                //.addLast(new HeartbeatEncode())

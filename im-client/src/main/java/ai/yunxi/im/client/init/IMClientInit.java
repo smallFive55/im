@@ -15,10 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import ai.yunxi.im.client.config.UserClientConfiguration;
 import ai.yunxi.im.client.scanner.Scan;
-import ai.yunxi.im.common.constant.MessageStatus;
 import ai.yunxi.im.common.pojo.ServiceInfo;
-import ai.yunxi.im.common.protocol.MessageCodec;
-import ai.yunxi.im.common.protocol.MessageObject;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -64,8 +61,6 @@ public class IMClientInit {
     @Autowired
     private UserClientConfiguration appConfiguration ;
     
-    private MessageCodec codec = new MessageCodec();
-    
     @PostConstruct
     public void start() throws Exception {
 		LOGGER.info("1.获取服务端IP+端口;2.启动客户端;3.向服务端注册;");
@@ -81,10 +76,6 @@ public class IMClientInit {
 	 * 向服务端注册自己
 	 */
 	private void regiestToService() {
-		//向服务端注册登录
-		MessageObject message = new MessageObject(MessageStatus.LOGIN, System.currentTimeMillis(), userId);
-		String msg = codec.encoder(message);
-		channel.writeAndFlush(msg);
 		
 		try {
 			Thread th = new Thread(new Scan(channel));

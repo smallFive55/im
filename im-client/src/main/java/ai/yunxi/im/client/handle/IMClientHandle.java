@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * 
@@ -27,6 +29,14 @@ public class IMClientHandle extends SimpleChannelInboundHandler {
 		buf.readBytes(req);
 		String body = new String(req, "UTF-8");
 		System.out.println("Now is : "+body);
+	}
+
+	@Override
+	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+		IdleStateEvent event = (IdleStateEvent) evt;
+		if(event.state() == IdleState.READER_IDLE){
+			System.out.println("连接断开了！！！");
+		}
 	}
 
 }
