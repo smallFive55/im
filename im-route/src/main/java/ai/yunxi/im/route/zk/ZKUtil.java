@@ -13,13 +13,6 @@ import com.alibaba.fastjson.JSON;
 import ai.yunxi.im.route.config.AppConfiguration;
 
 
-/**
- * Function: Zookeeper 工具
- *
- * @author crossoverJie
- *         Date: 2018/8/19 00:33
- * @since JDK 1.8
- */
 @Component
 public class ZKUtil {
 

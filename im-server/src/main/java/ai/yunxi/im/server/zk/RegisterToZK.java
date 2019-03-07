@@ -6,13 +6,6 @@ import org.slf4j.LoggerFactory;
 import ai.yunxi.im.server.config.AppConfiguration;
 import ai.yunxi.im.server.config.SpringBeanFactory;
 
-/**
- * Function:
- *
- * @author crossoverJie
- *         Date: 2018/8/24 01:37
- * @since JDK 1.8
- */
 public class RegisterToZK implements Runnable {
 
     private static Logger logger = LoggerFactory.getLogger(RegisterToZK.class);

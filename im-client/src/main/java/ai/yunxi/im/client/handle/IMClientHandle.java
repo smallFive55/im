@@ -18,5 +18,4 @@ public class IMClientHandle extends ChannelInboundHandlerAdapter {
 		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol) msg;
 		System.out.println("客户端接收到消息："+message.getContent());
 	}
-
 }

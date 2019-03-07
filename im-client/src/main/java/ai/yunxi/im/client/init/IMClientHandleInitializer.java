@@ -9,13 +9,6 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 
-/**
- * Function:
- *
- * @author crossoverJie
- *         Date: 23/02/2018 22:47
- * @since JDK 1.8
- */
 public class IMClientHandleInitializer extends ChannelInitializer<Channel> {
 
     private final IMClientHandle cimClientHandle = new IMClientHandle();

@@ -1,16 +1,11 @@
 package ai.yunxi.im.server.handle;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ai.yunxi.im.common.protocol.CommandConstant;
 import ai.yunxi.im.common.protocol.MessageProto;
 import ai.yunxi.im.server.config.SpringBeanFactory;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;

@@ -38,8 +38,6 @@ public class Scan implements Runnable {
 			        LOGGER.warn("不能发送空消息！");
 			        continue;
 			    }
-			    //对用户发送的消息编码
-//            MessageProtocol message = codec.decoder(msg, bean.getUserId());
 			    
 			    //系统内置命令
 			    if (CommandConstant.isSystemCommond(msg)){
@@ -54,7 +52,6 @@ public class Scan implements Runnable {
 
 			    //真正的发送消息，调用路由器，获得所有活动服务端，分发消息
 			    client.sendMessage(chat);
-			    
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

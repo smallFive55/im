@@ -47,14 +47,8 @@ public class ServiceController {
 				.setContent(chatinfo.getContent()).build();
 
 		//2.根据消息发送给指定客户端（群发）
-		//   根据userID，从本地Map集合中得到对应的客户端NioSocketChannel，发送消息
+		//   根据userID，从本地Map集合中得到对应的客户端Channel，发送消息
 		if(CommandConstant.CHAT.equals(message.getCommand())){
-			//聊天
-//			Channel channel = channelMap.getClient(message.getUserId());
-//			if (null == channel) {
-//	            throw new NullPointerException("客户端[" + message.getUserId() + "]不在线！");
-//	        }
-			
 			for (Entry<Integer, Channel> entry : channelMap.getCHANNEL_MAP().entrySet()) {
 				//过滤客户端本身
 				if(entry.getKey() != message.getUserId()){

@@ -62,9 +62,6 @@ public class IMClientInit {
     @Autowired
     private OkHttpClient okHttpClient;
     
-//    @Autowired
-//    private UserClientConfiguration appConfiguration ;
-    
     @PostConstruct
     public void start() throws Exception {
 		LOGGER.info("1.获取服务端IP+端口;2.启动客户端;3.向服务端注册;");
