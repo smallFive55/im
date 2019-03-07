@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ai.yunxi.im.server.config.AppConfiguration;
-import ai.yunxi.im.server.utils.SpringBeanFactory;
+import ai.yunxi.im.server.config.SpringBeanFactory;
 
 /**
  * Function:

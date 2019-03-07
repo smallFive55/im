@@ -2,13 +2,11 @@ package ai.yunxi.im.common.pojo;
 
 import java.io.Serializable;
 
-import ai.yunxi.im.common.pojo.ServiceInfo;
-
 /**
  * 
  * @author 小五老师-云析学院
  * @createTime 2019年2月26日 下午9:16:44
- * 
+ * 接口调用返回对象
  */
 public class IMServiceResponse implements Serializable {
 
@@ -23,8 +21,22 @@ public class IMServiceResponse implements Serializable {
 	
 	private String code;
 	private String message;
-	private ServiceInfo dataBody;
 	
+	/**
+	 * 
+	 */
+	public IMServiceResponse() {
+		super();
+	}
+	/**
+	 * @param code
+	 * @param message
+	 */
+	public IMServiceResponse(String code, String message) {
+		super();
+		this.code = code;
+		this.message = message;
+	}
 	public String getCode() {
 		return code;
 	}
@@ -36,45 +48,5 @@ public class IMServiceResponse implements Serializable {
 	}
 	public void setMessage(String message) {
 		this.message = message;
-	}
-	public ServiceInfo getDataBody() {
-		return dataBody;
-	}
-	public void setDataBody(ServiceInfo dataBody) {
-		this.dataBody = dataBody;
-	}
-
-	public static class LoginInfo {
-	    private Long userId ;
-	    private String userName ;
-
-	    public LoginInfo(Long userId, String userName) {
-	        this.userId = userId;
-	        this.userName = userName;
-	    }
-
-	    public Long getUserId() {
-	        return userId;
-	    }
-
-	    public void setUserId(Long userId) {
-	        this.userId = userId;
-	    }
-
-	    public String getUserName() {
-	        return userName;
-	    }
-
-	    public void setUserName(String userName) {
-	        this.userName = userName;
-	    }
-
-	    @Override
-	    public String toString() {
-	        return "LoginReqVO{" +
-	                "userId=" + userId +
-	                ", userName='" + userName + '\'' +
-	                "} " + super.toString();
-	    }
 	}
 }

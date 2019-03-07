@@ -1,4 +1,4 @@
-package ai.yunxi.im.server.utils;
+package ai.yunxi.im.server.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

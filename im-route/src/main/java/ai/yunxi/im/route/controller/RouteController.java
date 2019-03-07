@@ -1,5 +1,6 @@
 package ai.yunxi.im.route.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -10,12 +11,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ai.yunxi.im.common.constant.Constant;
+import ai.yunxi.im.common.pojo.ChatInfo;
 import ai.yunxi.im.common.pojo.ServiceInfo;
 import ai.yunxi.im.common.pojo.UserInfo;
+import ai.yunxi.im.route.service.RouteService;
 import ai.yunxi.im.route.zk.ZKUtil;
 
 /**
@@ -38,6 +40,8 @@ public class RouteController {
 	
 	private AtomicLong index = new AtomicLong();
 	
+	@Autowired
+	private RouteService routeService;
 	/**
 	 * 客户端获得服务端信息
 	 **/
@@ -62,6 +66,30 @@ public class RouteController {
 		String[] serv = server.substring(server.indexOf("-")+1).split(":");
 		ServiceInfo serviceInfo = new ServiceInfo(serv[0], Integer.parseInt(serv[1]), Integer.parseInt(serv[2]));
 		return serviceInfo;
+	}
+	
+	/**
+	 * 分发消息
+	 **/
+	@RequestMapping(value="/chat", method=RequestMethod.POST)
+	public void chat(@RequestBody ChatInfo chatinfo){
+		//判断userId是否登录——从缓存取数据 ...
+		
+		try {
+			//从ZK拿到所有节点，分发消息
+			List<String> all = zk.getAllNode();
+			for (String server : all) {
+				String[] serv = server.substring(server.indexOf("-")+1).split(":");
+				String ip = serv[0];
+				int httpPort = Integer.parseInt(serv[2]);
+				String url = "http://"+ip+":"+httpPort+"/pushMessage";
+				routeService.sendMessage(url, chatinfo);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -28,14 +28,21 @@ public class MessageCodec {
 	public MessageProto.MessageProtocol decoder(String message, Integer userId){
 		if(message ==null || "".equals(message.trim())){return null;}
 		
+//		int idx = message.indexOf(":-+-:");
+//		//message = command-time-userId:-+-:content
+//		String sysstr = message.substring(0, idx);
+//		String content = message.substring(idx+5);
+//		String[] split = sysstr.split("-");
+//		//封装Message对象
+//		MessageProto.MessageProtocol msgObj = builderMessage(content, split[0], Long.parseLong(split[1]), Integer.parseInt(split[2]));
+		
 		MessageProto.MessageProtocol msgObj = null;
 		
 		//系统指令
-		if(CommondConstant.isSystemCommond(message)){
+		if(CommandConstant.isSystemCommond(message)){
 			msgObj = builderMessage("System Message", message, System.currentTimeMillis(), userId);
 			return msgObj;
 		}
-		
 		int idx = message.indexOf(":-+-:");
 		if(idx>0){
 			//message = command-time-userId:-+-:content
@@ -47,7 +54,7 @@ public class MessageCodec {
 		}else{
 			//message = content
 			//默认聊天
-			msgObj = builderMessage(message, CommondConstant.CHAT, System.currentTimeMillis(), userId);
+			msgObj = builderMessage(message, CommandConstant.CHAT, System.currentTimeMillis(), userId);
 		}
 		return msgObj;
 	}

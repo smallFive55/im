@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 public class UserClientConfiguration {
 
     @Value("${im.user.id}")
-    private Long userId;
+    private Integer userId;
 
     @Value("${im.user.userName}")
     private String userName;
 
-	public Long getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
-	public void setUserId(Long userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	public String getUserName() {

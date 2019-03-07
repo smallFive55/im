@@ -1,8 +1,6 @@
 package ai.yunxi.im.server.zk;
 
 import org.I0Itec.zkclient.ZkClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,7 @@ import ai.yunxi.im.server.config.AppConfiguration;
 @Component
 public class ZKUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(ZKUtil.class);
+//    private static Logger logger = LoggerFactory.getLogger(ZKUtil.class);
 
 
     @Autowired

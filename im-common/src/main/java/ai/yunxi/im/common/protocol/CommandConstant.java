@@ -5,7 +5,7 @@ package ai.yunxi.im.common.protocol;
  * @createTime 2018年3月27日 下午8:23:31
  * 
  */
-public class CommondConstant {
+public class CommandConstant {
 
 	//客户端向服务端发送登录指令
 	public static final String LOGIN="LOGIN";

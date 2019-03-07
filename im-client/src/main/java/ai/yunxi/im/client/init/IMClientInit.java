@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import ai.yunxi.im.client.config.UserClientConfiguration;
-import ai.yunxi.im.client.scanner.Scan;
+import ai.yunxi.im.common.constant.MessageStatus;
+import ai.yunxi.im.common.pojo.ChatInfo;
 import ai.yunxi.im.common.pojo.ServiceInfo;
+import ai.yunxi.im.common.protocol.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -44,7 +44,6 @@ public class IMClientInit {
 	private EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("im-client-work"));
 	
 	private SocketChannel channel;
-	private AttributeKey<Integer> userAttr = AttributeKey.valueOf("userId"); 
 	
     @Value("${im.user.id}")
     private Integer userId;
@@ -55,13 +54,16 @@ public class IMClientInit {
     @Value("${im.server.route.request.url}")
     private String serverRouteLoginUrl;
     
+    @Value("${im.chat.route.request.url}")
+    private String chatRouteUrl;
+    
     private MediaType mediaType = MediaType.parse("application/json");
     
     @Autowired
     private OkHttpClient okHttpClient;
     
-    @Autowired
-    private UserClientConfiguration appConfiguration ;
+//    @Autowired
+//    private UserClientConfiguration appConfiguration ;
     
     @PostConstruct
     public void start() throws Exception {
@@ -70,7 +72,7 @@ public class IMClientInit {
 		ServiceInfo serviceInfo = getServiceInfo();
 		//2.启动客户端;
 		startClient(serviceInfo);
-		//3.与服务端通信;
+		//3.向服务端登陆;
 		regiestToService();
 	}
 
@@ -78,16 +80,13 @@ public class IMClientInit {
 	 * 与服务端通信
 	 */
 	private void regiestToService() {
-		//设置channel属性
-		channel.attr(userAttr).set(userId);
-		try {
-			Thread th = new Thread(new Scan(channel, userId));
-			th.setName("client-scanner-thread");
-			th.start();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		MessageProto.MessageProtocol login = MessageProto.MessageProtocol.newBuilder()
+                .setUserId(userId)
+                .setContent(userName)
+                .setCommand(MessageStatus.LOGIN)
+                .setTime(System.currentTimeMillis())
+                .build();
+        channel.writeAndFlush(login);
 	}
 	
 	/**
@@ -151,6 +150,28 @@ public class IMClientInit {
 			serviceInfo.setNettyPort(8088);
 			return serviceInfo;
 		}
-//		return null;
+	}
+
+	public void sendMessage(ChatInfo chat) {
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("command",chat.getCommand());
+			jsonObject.put("time",chat.getTime());
+			jsonObject.put("userId",chat.getUserId());
+			jsonObject.put("content",chat.getContent());
+			RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
+			
+			Request request = new Request.Builder()
+			        .url(chatRouteUrl)
+			        .post(requestBody)
+			        .build();
+
+			Response response = okHttpClient.newCall(request).execute() ;
+			if (!response.isSuccessful()){
+			    throw new IOException("Unexpected code " + response);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

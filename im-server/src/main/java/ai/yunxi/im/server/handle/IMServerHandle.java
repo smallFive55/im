@@ -1,14 +1,19 @@
 package ai.yunxi.im.server.handle;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ai.yunxi.im.common.protocol.CommandConstant;
 import ai.yunxi.im.common.protocol.MessageProto;
+import ai.yunxi.im.server.config.SpringBeanFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
-import okhttp3.MediaType;
 
 /**
  * 
@@ -17,14 +22,21 @@ import okhttp3.MediaType;
  * 
  */
 public class IMServerHandle extends ChannelInboundHandlerAdapter {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(IMServerHandle.class);
+	
+	private ChannelMap channelMap;
+    
+    private AttributeKey<Integer> userId = AttributeKey.valueOf("userId"); 
+    
+	/**
+	 * @param channelMap
+	 */
+	public IMServerHandle() {
+		super();
+		this.channelMap = SpringBeanFactory.getBean(ChannelMap.class);
+	}
 
-    private MediaType mediaType = MediaType.parse("application/json");
-    
-    private static final Map<Long, Channel> CHANNEL_MAP = new ConcurrentHashMap<Long, Channel>(16);
-    
-    //设置一些Channel的属性
-  	private AttributeKey<Integer> userId = AttributeKey.valueOf("userId"); 
-    
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		//客户端消息处理
@@ -32,8 +44,15 @@ public class IMServerHandle extends ChannelInboundHandlerAdapter {
 	}
 
 	private void handleMessages(ChannelHandlerContext ctx, Object msg) {
-		System.out.println("服务端接收到消息："+msg+".---------客户端channel属性：userId:"+ctx.channel().attr(userId).get());
 		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol) msg;
-//		ctx.writeAndFlush(message);
+		
+		//处理消息
+		if(CommandConstant.LOGIN.equals(message.getCommand())){
+			//客户端登录，保存客户端channel
+			ctx.channel().attr(userId).set(message.getUserId());
+			channelMap.putClient(message.getUserId(), ctx.channel());
+			LOGGER.info("----客户端登录成功。userId:"+message.getUserId());
+			
+		}
 	}
 }
