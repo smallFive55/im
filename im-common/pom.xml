@@ -19,5 +19,10 @@
   		<artifactId>msgpack</artifactId>
   		<version>0.6.12</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.google.protobuf</groupId>
+  		<artifactId>protobuf-java</artifactId>
+  		<version>3.4.0</version>
+  	</dependency>
   </dependencies>
 </project>

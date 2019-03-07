@@ -1,9 +1,6 @@
 package ai.yunxi.im.common.protocol;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import ai.yunxi.im.common.constant.MessageStatus;
+import ai.yunxi.im.common.protocol.MessageProto.MessageProtocol.Builder;
 
 /**
  * 
@@ -13,47 +10,53 @@ import ai.yunxi.im.common.constant.MessageStatus;
  */
 public class MessageCodec {
 	
-	//将字符串指令解码为MessageObject对象
-	public MessageObject decoder(String message){
+	private MessageProto.MessageProtocol builderMessage(String content, String command, Long time, Integer userId){
+		Builder builder = MessageProto.MessageProtocol.newBuilder();
+		builder.setContent(content);
+		builder.setCommand(command);
+		builder.setTime(time);
+		builder.setUserId(userId); //消息发送人userId
+		return builder.build();
+	}
+	
+//	public static void main(String[] args) {
+//		MessageCodec messageCodec = new MessageCodec();
+//		messageCodec.decoder("LOGIN", 1);
+//	}
+	
+	//将字符串指令解码为MessageProto.MessageProtocol对象
+	public MessageProto.MessageProtocol decoder(String message, Integer userId){
 		if(message ==null || "".equals(message.trim())){return null;}
 		
-		Pattern pattern = Pattern.compile("^\\[(.*)\\](\\s-\\s(.*))?");
-		Matcher matcher = pattern.matcher(message);
-		String headers = ""; //消息头
-		String content = ""; //消息体
-		if(matcher.find()){
-			headers = matcher.group(1);
-			content = matcher.group(3);
-		}
-		String[] split = headers.split("\\]\\[");
-		String cmd = split[0];
-		long time = Long.parseLong(split[1]);
-		long userId = Long.parseLong(split[2]);
+		MessageProto.MessageProtocol msgObj = null;
 		
-		//将客户发送的消息封装为MessageObject对象
-		if(cmd.equals(MessageStatus.LOGIN) || cmd.equals(MessageStatus.LOGOUT)){
-			return new MessageObject(cmd, time, userId);
-		}else if(cmd.equals(MessageStatus.CHAT) || cmd.equals(MessageStatus.SYSTEM)){
-			return new MessageObject(cmd, time, userId, content);
+		//系统指令
+		if(CommondConstant.isSystemCommond(message)){
+			msgObj = builderMessage("System Message", message, System.currentTimeMillis(), userId);
+			return msgObj;
 		}
-		return null;
+		
+		int idx = message.indexOf(":-+-:");
+		if(idx>0){
+			//message = command-time-userId:-+-:content
+			String sysstr = message.substring(0, idx);
+			String content = message.substring(idx+5);
+			String[] split = sysstr.split("-");
+			//封装Message对象
+			msgObj = builderMessage(content, split[0], Long.parseLong(split[1]), Integer.parseInt(split[2]));
+		}else{
+			//message = content
+			//默认聊天
+			msgObj = builderMessage(message, CommondConstant.CHAT, System.currentTimeMillis(), userId);
+		}
+		return msgObj;
 	}
 	
 	
-	//将MessageObject对象编码为字符串指令
-	public String encoder(MessageObject msg){
+	//将MessageProto对象编码为字符串指令
+	public String encoder(MessageProto.MessageProtocol msg){
 		if(msg == null){return null;}
-		String message = "["+msg.getCmd()+"]["+msg.getTime()+"]";
-		if(msg.getCmd().equals(MessageStatus.SYSTEM)){
-			message += "["+msg.getOnline()+"]";
-		}else if(msg.getCmd().equals(MessageStatus.CHAT)
-				||msg.getCmd().equals(MessageStatus.LOGIN)
-				||msg.getCmd().equals(MessageStatus.LOGOUT)){
-			message += "["+msg.getUserId()+"]";
-		}
-		if(msg.getContent() != null && !msg.getContent().equals("")){
-			message += " - "+msg.getContent();
-		}
+		String message = msg.getCommand()+"-"+msg.getTime()+"-"+msg.getUserId()+":-+-:"+msg.getContent();
 		return message;
 	}
 }

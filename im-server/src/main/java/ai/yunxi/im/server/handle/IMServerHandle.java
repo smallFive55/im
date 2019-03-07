@@ -3,9 +3,10 @@ package ai.yunxi.im.server.handle;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ai.yunxi.im.common.protocol.MessageProto;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
 import okhttp3.MediaType;
 
@@ -15,75 +16,24 @@ import okhttp3.MediaType;
  * @createTime 2019年2月27日 下午2:02:42
  * 
  */
-public class IMServerHandle extends SimpleChannelInboundHandler {
+public class IMServerHandle extends ChannelInboundHandlerAdapter {
 
     private MediaType mediaType = MediaType.parse("application/json");
     
     private static final Map<Long, Channel> CHANNEL_MAP = new ConcurrentHashMap<Long, Channel>(16);
     
     //设置一些Channel的属性
-  	private AttributeKey<Long> userId = AttributeKey.valueOf("userId"); 
+  	private AttributeKey<Integer> userId = AttributeKey.valueOf("userId"); 
     
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println(msg.toString());
 		//客户端消息处理
-		handleMessages(ctx, msg.toString());
+		handleMessages(ctx, msg);
 	}
 
-	private void handleMessages(ChannelHandlerContext ctx, String msg) {
-		
-		if("LOGIN".equals(msg)){
-			//处理客户端登陆逻辑
-//			ctx.channel().attr(userId).set(message.getUserId());
-			//保存客户端userId与channel的关系映射
-//			CHANNEL_MAP.put(message.getUserId(), ctx.channel());
-		} else if("CHAT".equals(msg)){
-			//处理客户端消息发送逻辑
-			
-		}
-		
-		
-		
-//		String currentTime = "QUERY TIME ORDER".equalsIgnoreCase(body) ? new Date(System.currentTimeMillis()).toString() : "BAD ORDER";
-//		ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
-//		//将待发送的消息放到发送缓存数组中
-//		ctx.writeAndFlush(resp);
+	private void handleMessages(ChannelHandlerContext ctx, Object msg) {
+		System.out.println("服务端接收到消息："+msg+".---------客户端channel属性：userId:"+ctx.channel().attr(userId).get());
+		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol) msg;
+//		ctx.writeAndFlush(message);
 	}
-
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("-------------channelRead0:"+msg);
-	}
-
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		
-	}
-
-	@Override
-	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("------有人退出了服务器"+ctx.channel());
-		
-//		JSONObject jsonObject = new JSONObject();
-//		jsonObject.put("userId","0");
-//		RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
-//		
-//		Request request = new Request.Builder()
-//		        .url(clientLogoutUrl)
-//		        .post(requestBody)
-//		        .build();
-//
-//		Response response = okHttpClient.newCall(request).execute() ;
-//		if (!response.isSuccessful()){
-//		    throw new IOException("Unexpected code " + response);
-//		}
-	}
-
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("服务端退出连接");
-//		ctx.channel().close();
-	}
-
 }

@@ -22,6 +22,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -43,9 +44,10 @@ public class IMClientInit {
 	private EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("im-client-work"));
 	
 	private SocketChannel channel;
+	private AttributeKey<Integer> userAttr = AttributeKey.valueOf("userId"); 
 	
     @Value("${im.user.id}")
-    private long userId;
+    private Integer userId;
 
     @Value("${im.user.userName}")
     private String userName;
@@ -68,17 +70,18 @@ public class IMClientInit {
 		ServiceInfo serviceInfo = getServiceInfo();
 		//2.启动客户端;
 		startClient(serviceInfo);
-		//3.向服务端注册;
+		//3.与服务端通信;
 		regiestToService();
 	}
 
 	/**
-	 * 向服务端注册自己
+	 * 与服务端通信
 	 */
 	private void regiestToService() {
-		
+		//设置channel属性
+		channel.attr(userAttr).set(userId);
 		try {
-			Thread th = new Thread(new Scan(channel));
+			Thread th = new Thread(new Scan(channel, userId));
 			th.setName("client-scanner-thread");
 			th.start();
 		} catch (Exception e) {

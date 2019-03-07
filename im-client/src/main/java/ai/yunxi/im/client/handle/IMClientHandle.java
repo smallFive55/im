@@ -1,11 +1,8 @@
 package ai.yunxi.im.client.handle;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
+import ai.yunxi.im.common.protocol.MessageProto;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
  * 
@@ -13,30 +10,13 @@ import io.netty.handler.timeout.IdleStateEvent;
  * @createTime 2019年2月26日 下午10:01:02
  * 
  */
-public class IMClientHandle extends SimpleChannelInboundHandler {
-
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		
-	}
+public class IMClientHandle extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		ByteBuf buf = (ByteBuf) msg;
-		//buf.readableBytes():获取缓冲区中可读的字节数；
-		//根据可读字节数创建数组
-		byte[] req = new byte[buf.readableBytes()];
-		buf.readBytes(req);
-		String body = new String(req, "UTF-8");
-		System.out.println("Now is : "+body);
-	}
-
-	@Override
-	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-		IdleStateEvent event = (IdleStateEvent) evt;
-		if(event.state() == IdleState.READER_IDLE){
-			System.out.println("连接断开了！！！");
-		}
+		
+		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol) msg;
+		System.out.println("客户端接收到消息："+message.getContent());
 	}
 
 }

@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package protocol;
+
+option java_package = "ai.yunxi.im.common.protocol";
+option java_outer_classname = "MessageProto";
+
+message MessageProtocol {
+
+  required string command = 1;
+  required int64 time = 2;
+  required int32 userId = 3;
+  required string content = 4;
+  
+}
