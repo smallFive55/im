@@ -10,6 +10,10 @@ import java.io.Serializable;
  */
 public class ChatInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1658289946855422573L;
 	private String command;
 	private Long time;
 	private Integer userId;

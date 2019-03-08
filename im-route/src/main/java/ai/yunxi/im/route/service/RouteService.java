@@ -13,4 +13,6 @@ import ai.yunxi.im.common.pojo.ChatInfo;
 public interface RouteService {
 
 	public void sendMessage(String url, ChatInfo chat) throws IOException;
+	
+	public void clientLogout(Integer userId, String url) throws Exception;
 }

@@ -17,6 +17,7 @@ import ai.yunxi.im.common.constant.Constant;
 import ai.yunxi.im.common.pojo.ChatInfo;
 import ai.yunxi.im.common.pojo.ServiceInfo;
 import ai.yunxi.im.common.pojo.UserInfo;
+import ai.yunxi.im.common.utils.StringUtil;
 import ai.yunxi.im.route.service.RouteService;
 import ai.yunxi.im.route.zk.ZKUtil;
 
@@ -74,7 +75,11 @@ public class RouteController {
 	@RequestMapping(value="/chat", method=RequestMethod.POST)
 	public void chat(@RequestBody ChatInfo chatinfo){
 		//判断userId是否登录——从缓存取数据 ...
-		
+		String islogin = redisTemplate.opsForValue().get(Constant.ROUTE_PREFIX+chatinfo.getUserId());
+		if(StringUtil.isEmpty(islogin)){
+			LOGGER.info("该用户并未登录["+chatinfo.getUserId()+"]");
+			return;
+		}
 		try {
 			//从ZK拿到所有节点，分发消息
 			List<String> all = zk.getAllNode();
@@ -83,6 +88,7 @@ public class RouteController {
 				String ip = serv[0];
 				int httpPort = Integer.parseInt(serv[2]);
 				String url = "http://"+ip+":"+httpPort+"/pushMessage";
+				
 				routeService.sendMessage(url, chatinfo);
 			}
 		} catch (NumberFormatException e) {
@@ -98,7 +104,17 @@ public class RouteController {
 	@RequestMapping(value="/logout", method=RequestMethod.POST)
 	public void logout(@RequestBody UserInfo userinfo){
 		try {
+			String server = redisTemplate.opsForValue().get(Constant.ROUTE_PREFIX+userinfo.getId());
+			String[] serv = server.substring(server.indexOf("-")+1).split(":");
+			String ip = serv[0];
+			int httpPort = Integer.parseInt(serv[2]);
+			String url = "http://"+ip+":"+httpPort+"/clientLogout";
+			//服务端处理客户端下线事件
+			routeService.clientLogout(userinfo.getId(), url);
+			
+			//从redis缓存删除映射
 			redisTemplate.opsForValue().getOperations().delete(Constant.ROUTE_PREFIX+userinfo.getId());
+			
 			LOGGER.info("路由端处理了用户下线逻辑："+userinfo.getId());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

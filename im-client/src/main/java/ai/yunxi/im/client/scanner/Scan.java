@@ -40,8 +40,15 @@ public class Scan implements Runnable {
 			    }
 			    
 			    //系统内置命令
-			    if (CommandConstant.isSystemCommond(msg)){
+			    if (CommandConstant.LOGOUT.equals(msg)){
 			    	//处理登陆指令
+			    	client.logout();
+			        LOGGER.warn("下线成功，如需加入聊天室，请重新登录！");
+			    	continue;
+			    } else if (CommandConstant.LOGIN.equals(msg)){
+			    	LOGGER.warn("正在重新登录...");
+			    	client.start();
+			    	continue;
 			    }
 			    
 			    ChatInfo chat = new ChatInfo();

@@ -1,7 +1,11 @@
 package ai.yunxi.im.server.handle;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONObject;
 
 import ai.yunxi.im.common.protocol.CommandConstant;
 import ai.yunxi.im.common.protocol.MessageProto;
@@ -9,6 +13,9 @@ import ai.yunxi.im.server.config.SpringBeanFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 
@@ -21,7 +28,8 @@ public class IMServerHandle extends ChannelInboundHandlerAdapter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(IMServerHandle.class);
 	
 	private ChannelMap channelMap;
-    
+    private ClientProcessor clientProcessor;
+	
     private AttributeKey<Integer> userId = AttributeKey.valueOf("userId"); 
     
 	/**
@@ -30,6 +38,7 @@ public class IMServerHandle extends ChannelInboundHandlerAdapter {
 	public IMServerHandle() {
 		super();
 		this.channelMap = SpringBeanFactory.getBean(ChannelMap.class);
+		this.clientProcessor = SpringBeanFactory.getBean(ClientProcessor.class);
 	}
 
 	@Override
@@ -50,4 +59,14 @@ public class IMServerHandle extends ChannelInboundHandlerAdapter {
 			
 		}
 	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		
+		Integer uid = ctx.channel().attr(userId).get();
+		clientProcessor.down(uid);
+		LOGGER.info("----客户端强智下线。userId:"+uid);
+	}
+	
+	
 }

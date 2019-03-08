@@ -54,8 +54,12 @@ public class IMClientInit {
     @Value("${im.server.route.request.url}")
     private String serverRouteLoginUrl;
     
+    @Value("${im.clear.route.request.url}")
+    private String clearRouteUrl;
+    
     @Value("${im.chat.route.request.url}")
     private String chatRouteUrl;
+    
     
     private MediaType mediaType = MediaType.parse("application/json");
     
@@ -149,6 +153,9 @@ public class IMClientInit {
 		}
 	}
 
+	/**
+	 * 客户端发送消息
+	 **/
 	public void sendMessage(ChatInfo chat) {
 		try {
 			JSONObject jsonObject = new JSONObject();
@@ -160,6 +167,30 @@ public class IMClientInit {
 			
 			Request request = new Request.Builder()
 			        .url(chatRouteUrl)
+			        .post(requestBody)
+			        .build();
+
+			Response response = okHttpClient.newCall(request).execute() ;
+			if (!response.isSuccessful()){
+			    throw new IOException("Unexpected code " + response);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 客户端处理登出命令
+	 **/
+	public void logout(){
+
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("id",userId);
+			RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
+			
+			Request request = new Request.Builder()
+			        .url(clearRouteUrl)
 			        .post(requestBody)
 			        .build();
 

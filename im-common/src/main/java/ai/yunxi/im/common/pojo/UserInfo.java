@@ -10,6 +10,10 @@ import java.io.Serializable;
 
 public class UserInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7234089584705488188L;
 	private Integer id;
 	private String userName;
 	

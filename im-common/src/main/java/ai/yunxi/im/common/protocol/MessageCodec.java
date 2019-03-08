@@ -19,25 +19,11 @@ public class MessageCodec {
 		return builder.build();
 	}
 	
-//	public static void main(String[] args) {
-//		MessageCodec messageCodec = new MessageCodec();
-//		messageCodec.decoder("LOGIN", 1);
-//	}
-	
 	//将字符串指令解码为MessageProto.MessageProtocol对象
 	public MessageProto.MessageProtocol decoder(String message, Integer userId){
 		if(message ==null || "".equals(message.trim())){return null;}
 		
-//		int idx = message.indexOf(":-+-:");
-//		//message = command-time-userId:-+-:content
-//		String sysstr = message.substring(0, idx);
-//		String content = message.substring(idx+5);
-//		String[] split = sysstr.split("-");
-//		//封装Message对象
-//		MessageProto.MessageProtocol msgObj = builderMessage(content, split[0], Long.parseLong(split[1]), Integer.parseInt(split[2]));
-		
 		MessageProto.MessageProtocol msgObj = null;
-		
 		//系统指令
 		if(CommandConstant.isSystemCommond(message)){
 			msgObj = builderMessage("System Message", message, System.currentTimeMillis(), userId);
