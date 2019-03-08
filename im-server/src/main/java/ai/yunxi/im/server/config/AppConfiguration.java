@@ -18,8 +18,8 @@ public class AppConfiguration {
     @Value("${im.server.port}")
     private int imServerPort;
 
-    @Value("${im.client.logout.request.url}")
-    private String clientLogoutUrl;
+    @Value("${im.clear.route.request.url}")
+    private String clearRouteUrl;
     
 //    @Value("${im.clear.route.request.url}")
 //    private String clearRouteUrl ;
@@ -74,12 +74,12 @@ public class AppConfiguration {
         this.imServerPort = imServerPort;
     }
 
-	public String getClientLogoutUrl() {
-		return clientLogoutUrl;
+	public String getClearRouteUrl() {
+		return clearRouteUrl;
 	}
 
-	public void setClientLogoutUrl(String clientLogoutUrl) {
-		this.clientLogoutUrl = clientLogoutUrl;
+	public void setClearRouteUrl(String clearRouteUrl) {
+		this.clearRouteUrl = clearRouteUrl;
 	}
 
 //    public long getHeartBeatTime() {

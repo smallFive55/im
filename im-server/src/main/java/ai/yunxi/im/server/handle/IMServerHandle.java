@@ -65,7 +65,7 @@ public class IMServerHandle extends ChannelInboundHandlerAdapter {
 		
 		Integer uid = ctx.channel().attr(userId).get();
 		clientProcessor.down(uid);
-		LOGGER.info("----客户端强智下线。userId:"+uid);
+		LOGGER.info("----客户端强制下线。userId:"+uid);
 	}
 	
 	
