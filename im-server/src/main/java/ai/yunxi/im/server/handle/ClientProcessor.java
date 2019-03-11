@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
-import io.netty.channel.Channel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,8 +40,7 @@ public class ClientProcessor {
 	public void down(Integer userId){
 		try {
 			
-			channelMap.getCHANNEL_MAP().remove(userId);
-			
+//			channelMap.getCHANNEL_MAP().remove(userId);
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("id",userId);
 			RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
@@ -56,8 +54,6 @@ public class ClientProcessor {
 			if (!response.isSuccessful()){
 			    throw new IOException("Unexpected code " + response);
 			}
-
-			LOGGER.info("----客户端下线["+userId+"]");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

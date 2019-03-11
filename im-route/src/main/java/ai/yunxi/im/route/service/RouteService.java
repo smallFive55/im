@@ -14,5 +14,5 @@ public interface RouteService {
 
 	public void sendMessage(String url, ChatInfo chat) throws IOException;
 	
-//	public void clientLogout(Integer userId, String url) throws Exception;
+	public void clientLogout(Integer userId, String url) throws Exception;
 }

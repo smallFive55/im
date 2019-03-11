@@ -49,22 +49,22 @@ public class RouteServiceImpl implements RouteService {
 		}
 	}
 
-//	@Override
-//	public void clientLogout(Integer userId, String url) throws Exception {
-//		JSONObject jsonObject = new JSONObject();
-//		jsonObject.put("userId",userId);
-//		
-//		RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
-//		
-//		Request request = new Request.Builder()
-//		        .url(url)
-//		        .post(requestBody)
-//		        .build();
-//
-//		Response response = okHttpClient.newCall(request).execute() ;
-//		if (!response.isSuccessful()){
-//		    throw new IOException("Unexpected code " + response);
-//		}
-//	}
+	@Override
+	public void clientLogout(Integer userId, String url) throws Exception {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("userId",userId);
+		
+		RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
+		
+		Request request = new Request.Builder()
+		        .url(url)
+		        .post(requestBody)
+		        .build();
+
+		Response response = okHttpClient.newCall(request).execute() ;
+		if (!response.isSuccessful()){
+		    throw new IOException("Unexpected code " + response);
+		}
+	}
 
 }

@@ -109,21 +109,22 @@ public class RouteController {
 	@RequestMapping(value="/logout", method=RequestMethod.POST)
 	public void logout(@RequestBody UserInfo userinfo){
 		try {
-//			String server = redisTemplate.opsForValue().get(Constant.ROUTE_PREFIX+userinfo.getId());
-//			String[] serv = server.substring(server.indexOf("-")+1).split(":");
-//			String ip = serv[0];
-//			int httpPort = Integer.parseInt(serv[2]);
-//			String url = "http://"+ip+":"+httpPort+"/clientLogout";
-//			
-			//从redis缓存删除映射
+			String server = redisTemplate.opsForValue().get(Constant.ROUTE_PREFIX+userinfo.getId());
+			
+			//1.从redis缓存删除映射
 			redisTemplate.opsForValue().getOperations().delete(Constant.ROUTE_PREFIX+userinfo.getId());
 			
-//			try {
-//				//服务端处理客户端下线事件
-//				routeService.clientLogout(userinfo.getId(), url);
-//			} catch (ConnectException e) {
-//				LOGGER.info("服务端已下线...");
-//			}
+			//2.从服务端删除client channel
+			String[] serv = server.substring(server.indexOf("-")+1).split(":");
+			String ip = serv[0];
+			int httpPort = Integer.parseInt(serv[2]);
+			String url = "http://"+ip+":"+httpPort+"/clientLogout";
+			try {
+				//服务端处理客户端下线事件
+				routeService.clientLogout(userinfo.getId(), url);
+			} catch (ConnectException e) {
+				LOGGER.info("服务端已下线...");
+			}
 			
 			LOGGER.info("路由端处理了用户下线逻辑："+userinfo.getId());
 		} catch (Exception e) {
