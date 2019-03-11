@@ -46,6 +46,15 @@ public class ZKUtil {
     public void createNode(String path) {
         zkClient.createEphemeral(path);
     }
+    
+    /**
+     * 从zk删除节点
+     *
+     * @param path
+     */
+    public void removeNode(String path) {
+    	zkClient.delete(path);
+    }
 
     /**
      * 获取所有注册节点

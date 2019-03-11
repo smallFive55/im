@@ -1,11 +1,7 @@
 package ai.yunxi.im.server.handle;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSONObject;
 
 import ai.yunxi.im.common.protocol.CommandConstant;
 import ai.yunxi.im.common.protocol.MessageProto;
@@ -13,9 +9,6 @@ import ai.yunxi.im.server.config.SpringBeanFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * 

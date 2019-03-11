@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import ai.yunxi.im.common.protocol.MessageProto;
+import ai.yunxi.im.server.handle.IMServerHandle;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -53,15 +55,13 @@ public class IMServiceInit {
 				//创建NIOSocketChannel成功后，在进行初始化时，将它的ChannelHandler设置到ChannelPipeline中，用于处理网络IO事件
 				@Override
 				protected void initChannel(SocketChannel arg0) throws Exception {
-					arg0.pipeline()
-					
+					ChannelPipeline pipeline = arg0.pipeline();
 					// google Protobuf 编解码
-					.addLast(new ProtobufVarint32FrameDecoder())
-	                .addLast(new ProtobufDecoder(MessageProto.MessageProtocol.getDefaultInstance()))
-	                .addLast(new ProtobufVarint32LengthFieldPrepender())
-	                .addLast(new ProtobufEncoder())
-	                
-					.addLast(new IMServerHandleInitializer());
+					pipeline.addLast(new ProtobufVarint32FrameDecoder());
+					pipeline.addLast(new ProtobufDecoder(MessageProto.MessageProtocol.getDefaultInstance()));
+					pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+					pipeline.addLast(new ProtobufEncoder());
+					pipeline.addLast(new IMServerHandle());
 				}
 			});
 		ChannelFuture future = sb.bind(nettyPort).sync();

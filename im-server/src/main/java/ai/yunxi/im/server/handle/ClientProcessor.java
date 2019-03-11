@@ -2,12 +2,15 @@ package ai.yunxi.im.server.handle;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
+import io.netty.channel.Channel;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,6 +25,11 @@ import okhttp3.Response;
  */
 @Component
 public class ClientProcessor {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(ClientProcessor.class);
+	
+	@Autowired
+	private ChannelMap channelMap;
 	
 	private MediaType mediaType = MediaType.parse("application/json");
     @Autowired
@@ -32,6 +40,9 @@ public class ClientProcessor {
     
 	public void down(Integer userId){
 		try {
+			
+			channelMap.getCHANNEL_MAP().remove(userId);
+			
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("id",userId);
 			RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
@@ -45,6 +56,8 @@ public class ClientProcessor {
 			if (!response.isSuccessful()){
 			    throw new IOException("Unexpected code " + response);
 			}
+
+			LOGGER.info("----客户端下线["+userId+"]");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -13,16 +13,23 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import ai.yunxi.im.client.handle.IMClientHandle;
 import ai.yunxi.im.common.constant.MessageStatus;
 import ai.yunxi.im.common.pojo.ChatInfo;
 import ai.yunxi.im.common.pojo.ServiceInfo;
 import ai.yunxi.im.common.protocol.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -71,6 +78,10 @@ public class IMClientInit {
 		LOGGER.info("1.获取服务端IP+端口;2.启动客户端;3.向服务端注册;");
 		//1.获取服务端IP+端口;
 		ServiceInfo serviceInfo = getServiceInfo();
+		if(serviceInfo == null){
+			LOGGER.info("当前服务没有启动...");
+			throw new RuntimeException("当前服务没有启动...");
+		}
 		//2.启动客户端;
 		startClient(serviceInfo);
 		//3.向服务端登陆;
@@ -97,7 +108,18 @@ public class IMClientInit {
 		Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                .handler(new IMClientHandleInitializer());
+                .handler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					protected void initChannel(SocketChannel ch) throws Exception {
+						ChannelPipeline pipeline = ch.pipeline();
+				        // google Protobuf 编解码
+						pipeline.addLast(new ProtobufVarint32FrameDecoder());
+						pipeline.addLast(new ProtobufDecoder(MessageProto.MessageProtocol.getDefaultInstance()));
+						pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+						pipeline.addLast(new ProtobufEncoder());
+						pipeline.addLast(new IMClientHandle());
+					}
+				});
 
         ChannelFuture future = null;
         try {
@@ -142,15 +164,8 @@ public class IMClientInit {
 	        return serviceinfo;
 		} catch (IOException e) {
 			LOGGER.error("连接失败！");
-			
-			//---未建立路由
-			e.printStackTrace();
-			ServiceInfo serviceInfo = new ServiceInfo();
-			serviceInfo.setIp("192.168.110.1");
-			serviceInfo.setHttpPort(8083);
-			serviceInfo.setNettyPort(8088);
-			return serviceInfo;
 		}
+		return null;
 	}
 
 	/**
@@ -201,5 +216,13 @@ public class IMClientInit {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void restart() throws Exception{
+		//1.清理客户端信息（路由）
+		logout();
+		//2.start
+		start();
+		
 	}
 }

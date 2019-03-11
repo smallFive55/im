@@ -59,13 +59,4 @@ public class ServiceController {
 		}
 	}
 	
-	/**
-	 * 服务端处理客户端下线事件
-	 **/
-	@RequestMapping(value="/clientLogout", method=RequestMethod.POST)
-	public void clientLogout(@RequestBody ChatInfo chatinfo){
-		
-		Channel remove = channelMap.getCHANNEL_MAP().remove(chatinfo.getUserId());
-		LOGGER.info("----客户端下线["+remove.attr(userId).get()+"]");
-	}
 }
