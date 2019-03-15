@@ -8,29 +8,19 @@ import java.io.Serializable;
  * @createTime 2019年2月26日 下午9:14:28
  * 服务端基本信息
  */
-public class ServiceInfo implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7082896534513406904L;
-	private String ip;
-	private Integer nettyPort; //netty提供消息推送端口
-	private Integer httpPort; //http提供湍口
+public class ServerInfo implements Serializable {
 
 	/**
 	 * 
 	 */
-	public ServiceInfo() {
-		super();
-		// TODO Auto-generated constructor stub
+	private static final long serialVersionUID = -2230742812761280401L;
+	private String ip;
+	private Integer nettyPort;
+	private Integer httpPort;
+	
+	public ServerInfo() {
 	}
-	/**
-	 * @param ip
-	 * @param nettyPort
-	 * @param httpPort
-	 */
-	public ServiceInfo(String ip, Integer nettyPort, Integer httpPort) {
+	public ServerInfo(String ip, Integer nettyPort, Integer httpPort) {
 		super();
 		this.ip = ip;
 		this.nettyPort = nettyPort;

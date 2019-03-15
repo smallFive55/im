@@ -13,11 +13,20 @@ public class ChatInfo implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1658289946855422573L;
+	private static final long serialVersionUID = 1360647504610967672L;
 	private String command;
 	private Long time;
 	private Integer userId;
 	private String content;
+	
+	public ChatInfo(String command, Long time, Integer userId, String content) {
+		this.command = command;
+		this.time = time;
+		this.userId = userId;
+		this.content = content;
+	}
+	public ChatInfo() {
+	}
 	public String getCommand() {
 		return command;
 	}

@@ -3,12 +3,12 @@ package ai.yunxi.im.server.handle;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
-import okhttp3.MediaType;
+import ai.yunxi.im.common.constant.BasicConstant;
+import ai.yunxi.im.server.config.InitConfiguration;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -23,21 +23,19 @@ import okhttp3.Response;
 @Component
 public class ClientProcessor {
 
-	private MediaType mediaType = MediaType.parse("application/json");
     @Autowired
     private OkHttpClient okHttpClient;
-    
-    @Value("${im.clear.route.request.url}")
-    private String clearRouteUrl;
+    @Autowired
+    private InitConfiguration conf;
     
 	public void down(Integer userId){
 		try {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("id",userId);
-			RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toString());
+			jsonObject.put("userId",userId);
+			RequestBody requestBody = RequestBody.create(BasicConstant.MEDIA_TYPE,jsonObject.toString());
 			
 			Request request = new Request.Builder()
-			        .url(clearRouteUrl)
+			        .url(conf.getRouteLogoutUrl())
 			        .post(requestBody)
 			        .build();
 

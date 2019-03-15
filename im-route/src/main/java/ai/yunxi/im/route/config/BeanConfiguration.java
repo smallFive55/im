@@ -21,9 +21,13 @@ import okhttp3.OkHttpClient;
  */
 @Configuration
 public class BeanConfiguration {
-	
 	@Autowired
-    private AppConfiguration appConfiguration ;
+	private InitConfiguration conf;
+	
+	@Bean
+	public ZkClient createZKClient(){
+		return new ZkClient(conf.getAddr());
+	}
 	
 	/**
      * Redis bean
@@ -51,10 +55,5 @@ public class BeanConfiguration {
                 .writeTimeout(10,TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
         return builder.build();
-    }
-    
-    @Bean
-    public ZkClient buildZKClient(){
-        return new ZkClient(appConfiguration.getZkAddr(), 5000);
     }
 }

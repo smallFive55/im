@@ -17,15 +17,14 @@ import okhttp3.OkHttpClient;
  */
 @Configuration
 public class BeanConfiguration {
-
 	@Autowired
-    private AppConfiguration appConfiguration ;
+	private InitConfiguration conf;
 	
-    @Bean
-    public ZkClient buildZKClient(){
-        return new ZkClient(appConfiguration.getZkAddr(), 5000);
-    }
-    
+	@Bean
+	public ZkClient createZKClient(){
+		return new ZkClient(conf.getAddr());
+	}
+	
     /**
      * http client
      * @return okHttp

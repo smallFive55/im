@@ -1,41 +1,44 @@
 package ai.yunxi.im.server.zk;
 
+import java.net.InetAddress;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ai.yunxi.im.server.config.AppConfiguration;
+import ai.yunxi.im.server.config.InitConfiguration;
 import ai.yunxi.im.server.config.SpringBeanFactory;
 
 public class RegisterToZK implements Runnable {
 
-    private static Logger logger = LoggerFactory.getLogger(RegisterToZK.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RegisterToZK.class);
+    
+	private InitConfiguration conf;
+	private ZKUtil zk;
+	
+	public RegisterToZK() {
+		conf = SpringBeanFactory.getBean(InitConfiguration.class);
+		zk = SpringBeanFactory.getBean(ZKUtil.class);
+	}
 
-    private ZKUtil zk;
+	@Override
+	public void run() {
+		try {
+			String ip = InetAddress.getLocalHost().getHostAddress();
+			int httpPort = conf.getHttpPort();
+			int nettyPort = conf.getNettyPort();
+			LOGGER.info("---服务端注册到Zookeeper. ip:"+ip+"; httpPort:"+httpPort+"; nettyPort:"+nettyPort);
+			
+			//创建父节点
+			zk.createRootNode();
+			//判断是否需要注册到zk
+			if(conf.isZkSwitch()){
+				String path = conf.getRoot() + "/"+ip+"-"+conf.getNettyPort()+"-"+conf.getHttpPort();
+				zk.createNode(path);
+				LOGGER.info("---服务端注册到ZK成功，Path="+path);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    private AppConfiguration appConfiguration ;
-
-    private String ip;
-    private int imServerPort;
-    private int httpPort;
-
-    public RegisterToZK(String ip, int imServerPort,int httpPort) {
-        this.ip = ip;
-        this.imServerPort = imServerPort;
-        this.httpPort = httpPort ;
-        zk = SpringBeanFactory.getBean(ZKUtil.class) ;
-        appConfiguration = SpringBeanFactory.getBean(AppConfiguration.class) ;
-    }
-
-    @Override
-    public void run() {
-    	System.out.println("regist to zookeeper. ip:"+ip+"; imServerPort:"+imServerPort+"; httpPort:"+httpPort);
-        //创建父节点
-    	zk.createRootNode();
-        //是否要将自己注册到 ZK
-        if (appConfiguration.isZkSwitch()){
-            String path = appConfiguration.getZkRoot() + "/ip-" + ip + ":" + imServerPort + ":" + httpPort;
-            zk.createNode(path);
-            logger.info("注册 zookeeper 成功，msg=[{}]", path);
-        }
-    }
 }

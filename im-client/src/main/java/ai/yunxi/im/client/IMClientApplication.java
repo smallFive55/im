@@ -31,7 +31,6 @@ public class IMClientApplication implements CommandLineRunner {
 			th.setName("client-scanner-thread");
 			th.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -3,7 +3,7 @@ package ai.yunxi.im.server.handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ai.yunxi.im.common.protocol.CommandConstant;
+import ai.yunxi.im.common.constant.MessageConstant;
 import ai.yunxi.im.common.protocol.MessageProto;
 import ai.yunxi.im.server.config.SpringBeanFactory;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,49 +17,40 @@ import io.netty.util.AttributeKey;
  * 
  */
 public class IMServerHandle extends ChannelInboundHandlerAdapter {
-	
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(IMServerHandle.class);
 	
-	private ChannelMap channelMap;
-    private ClientProcessor clientProcessor;
+	private AttributeKey<Integer> userId = AttributeKey.valueOf("userId");
 	
-    private AttributeKey<Integer> userId = AttributeKey.valueOf("userId"); 
-    
-	/**
-	 * @param channelMap
-	 */
+	private ChannelMap CHANNEL_MAP = ChannelMap.newInstance();
+	
+	private ClientProcessor clientProcessor;
+	
+	
 	public IMServerHandle() {
-		super();
-		this.channelMap = SpringBeanFactory.getBean(ChannelMap.class);
 		this.clientProcessor = SpringBeanFactory.getBean(ClientProcessor.class);
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		//客户端消息处理
-		handleMessages(ctx, msg);
-	}
-
-	private void handleMessages(ChannelHandlerContext ctx, Object msg) {
-		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol) msg;
+		MessageProto.MessageProtocol message = (MessageProto.MessageProtocol)msg;
 		
-		//处理消息
-		if(CommandConstant.LOGIN.equals(message.getCommand())){
-			//客户端登录，保存客户端channel
-			ctx.channel().attr(userId).set(message.getUserId());
-			channelMap.putClient(message.getUserId(), ctx.channel());
-			LOGGER.info("----客户端登录成功。userId:"+message.getUserId());
-			
+		//处理客户端向服务端推送的消息
+		if(MessageConstant.LOGIN.equals(message.getCommand())){
+			//登录，保存Channel
+			ctx.channel().attr(userId).set(message.getUserId()); 
+			CHANNEL_MAP.putClient(message.getUserId(), ctx.channel());
+			LOGGER.info("---客户端登录成功。userId:"+message.getUserId());
 		}
 	}
-
+	
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		
 		Integer uid = ctx.channel().attr(userId).get();
+		//从Channel缓存删除客户端
+		CHANNEL_MAP.getCHANNEL_MAP().remove(uid);
 		clientProcessor.down(uid);
+		
 		LOGGER.info("----客户端强制下线。userId:"+uid);
 	}
-	
-	
 }
