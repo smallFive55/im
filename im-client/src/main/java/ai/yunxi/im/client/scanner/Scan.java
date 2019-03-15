@@ -40,7 +40,7 @@ public class Scan implements Runnable {
 				//处理系统指令，如：LOGIN LOGOUT 等
 				if(MessageConstant.LOGOUT.equals(msg)){
 					//移除登录状态数据
-//					client.clear();
+					client.clear();
 					LOGGER.info("---下线成功，如需加入聊天室，请重新登录");
 					continue;
 				} else if(MessageConstant.LOGIN.equals(msg)){
