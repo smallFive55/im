@@ -53,6 +53,7 @@ public class IMClientInit {
 	private final static Logger LOGGER = LoggerFactory.getLogger(IMClientInit.class);
 	private ServerInfo server;
 	public Channel channel;
+	private EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("im-client-work"));
 	
 	@Autowired
 	private InitConfiguration conf;
@@ -123,8 +124,6 @@ public class IMClientInit {
 	 * 启动客户端，建立连接
 	 */
 	public void startClient(){
-		
-		EventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("im-client-work"));
 		try {
 			Bootstrap bootstrap = new Bootstrap();
 			bootstrap.group(group)

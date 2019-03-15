@@ -34,14 +34,15 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 public class IMServerInit {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(IMServerInit.class);
+
+	private EventLoopGroup acceptorGroup = new NioEventLoopGroup();
+	private EventLoopGroup workerGroup = new NioEventLoopGroup();
 	
 	@Autowired
 	private InitConfiguration conf;
 	
 	@PostConstruct
 	public void start() throws Exception{
-		EventLoopGroup acceptorGroup = new NioEventLoopGroup();
-	    EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
 			//Netty用于启动NIO服务器的辅助启动类
 			ServerBootstrap sb = new ServerBootstrap();
