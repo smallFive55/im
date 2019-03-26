@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
-
 import ai.yunxi.im.route.config.InitConfiguration;
 
 
@@ -24,6 +22,8 @@ public class ZKUtil {
     @Autowired
     private InitConfiguration conf ;
 
+    List<String> allNode;
+    
     /**
      * 创建父级节点
      */
@@ -48,9 +48,16 @@ public class ZKUtil {
      * @return
      */
     public List<String> getAllNode(){
-        List<String> children = zkClient.getChildren("/route");
-        LOGGER.info("查询所有节点成功，节点数："+children.size());
-       return children;
+        LOGGER.info("查询所有节点成功，节点数："+allNode.size());
+        return allNode;
+    }
+    
+    /**
+     * 更新server list
+     */
+    public void setAllNode(List<String> allNode){
+    	LOGGER.info("server节点更新，节点数："+allNode.size());
+    	this.allNode = allNode;
     }
 
 }

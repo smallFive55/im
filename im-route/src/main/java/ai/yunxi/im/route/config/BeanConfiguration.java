@@ -1,7 +1,9 @@
 package ai.yunxi.im.route.config;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import ai.yunxi.im.route.zk.ZKUtil;
 import okhttp3.OkHttpClient;
 
 /**
@@ -23,10 +26,22 @@ import okhttp3.OkHttpClient;
 public class BeanConfiguration {
 	@Autowired
 	private InitConfiguration conf;
+	@Autowired
+	private ZKUtil zkUtil;
 	
 	@Bean
 	public ZkClient createZKClient(){
-		return new ZkClient(conf.getAddr());
+		ZkClient zk = new ZkClient(conf.getAddr());
+		
+		//监听/route节点下子节点的变化，实时更新server list
+		zk.subscribeChildChanges(conf.getRoot(), new IZkChildListener() {
+			
+			@Override
+			public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
+				zkUtil.setAllNode(currentChilds);
+			}
+		});
+		return zk;
 	}
 	
 	/**
